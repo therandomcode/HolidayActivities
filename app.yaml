@@ -1,0 +1,31 @@
+# This file specifies your Python application's runtime configuration
+# including URL routing, versions, static file uploads, etc. See
+# https://developers.google.com/appengine/docs/python/config/appconfig
+# for details.
+
+application: holiday-activities
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+# Handlers define how to route requests to your application.
+handlers:
+- url: /js
+  static_dir: js
+  application_readable: true
+- url: /img
+  static_dir: img
+  application_readable: true
+- url: /templates
+  static_dir: templates
+  application_readable: true
+- url: /.*  # This regex directs all routes to main.app
+  script: main.app
+
+# Third party libraries that are included in the App Engine SDK must be listed
+# here if you want to use them.
+libraries:
+- name: jinja2
+  version: latest
+- name: webapp2
+  version: latest

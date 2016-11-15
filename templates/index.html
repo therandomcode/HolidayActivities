@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>three.js - particles - random</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+		<style type="text/css">
+			
+			#selectedIdea {
+				margin-top: 10%;
+				min-width: 150px;
+				font-family: Arial, sans-serif;
+				font-size: 4vw;
+				color: white;
+				text-shadow: 0 0 100px gray;
+				text-align: center;
+			}
+
+			#bigText {
+				position: absolute;
+				width: 80%;
+				left: 10%;
+				text-align: center;
+			}
+
+			body {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: #000044;
+				background: url(img/h.jpg) repeat-x;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			a {
+				color:#ffffff;
+			}
+
+		</style>
+	</head>
+	<body onload="init()">
+		<div id = "bigText">
+			<h1 id = "selectedIdea"></h1>
+		</div>
+
+	<script type="text/javascript" src="js/ThreeCanvas.js"></script>
+	<script type="text/javascript" src="js/Snow.js"></script>
+	
+		<script>
+
+			// Script for falling snow 
+
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+
+			var container;
+
+			var particle;
+
+			var camera;
+			var scene;
+			var renderer;
+
+			var mouseX = 0;
+			var mouseY = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+			
+			var particles = []; 
+			var particleImage = new Image();//THREE.ImageUtils.loadTexture( "img/ParticleSmoke.png" );
+			particleImage.src = 'img/ParticleSmoke.png'; 
+
+		
+		
+			function init() {
+
+				document.getElementById('selectedIdea').innerHTML = rand;
+
+				container = document.createElement('div');
+				document.body.appendChild(container);
+
+				camera = new THREE.PerspectiveCamera( 75, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 10000 );
+				camera.position.z = 1000;
+
+				scene = new THREE.Scene();
+				scene.add(camera);
+					
+				renderer = new THREE.CanvasRenderer();
+				renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+				var material = new THREE.ParticleBasicMaterial( { map: new THREE.Texture(particleImage) } );
+					
+				for (var i = 0; i < 500; i++) {
+
+					particle = new Particle3D( material);
+					particle.position.x = Math.random() * 2000 - 1000;
+					particle.position.y = Math.random() * 2000 - 1000;
+					particle.position.z = Math.random() * 2000 - 1000;
+					particle.scale.x = particle.scale.y =  1;
+					scene.add( particle );
+					
+					particles.push(particle); 
+				}
+
+				container.appendChild( renderer.domElement );
+
+	
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+				
+				setInterval( loop, 1000 / 60 );				
+			}
+			
+			function onDocumentMouseMove( event ) {
+
+				mouseX = event.clientX - windowHalfX;
+				mouseY = event.clientY - windowHalfY;
+			}
+
+			function onDocumentTouchStart( event ) {
+
+				if ( event.touches.length == 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+				}
+			}
+
+			function onDocumentTouchMove( event ) {
+
+				if ( event.touches.length == 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+				}
+			}
+
+			//
+
+			function loop() {
+
+			for(var i = 0; i<particles.length; i++)
+				{
+
+					var particle = particles[i]; 
+					particle.updatePhysics(); 
+	
+					with(particle.position)
+					{
+						if(y<-1000) y+=2000; 
+						if(x>1000) x-=2000; 
+						else if(x<-1000) x+=2000; 
+						if(z>1000) z-=2000; 
+						else if(z<-1000) z+=2000; 
+					}				
+				}
+			
+				camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+				camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
+				camera.lookAt(scene.position); 
+
+				renderer.render( scene, camera );
+
+				
+			}
+
+			//Script for generating ideas 
+
+			var images = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+
+			var ideas = ['Pick up and go ice skating. You have half an hour to get ready!',
+							'Go to a Christmas Fair',
+							'Do a Pinterest craft together (must take less than three hours to complete)',
+							'Christmas carolling! ',
+							"Make teams. Compete for fancy wrapping of the other team's presents.",
+							'Hot chocolate! ',
+							'Go for a walk in the woods. ',
+							'Build a snowman, snow permitting.',
+							'Make cookies, and give most of them away',
+							'Make mulled wine, and drink it over a game of chess',
+							'Play a game of scrabble. English is only permitted on alternate turns.',
+							'Pull out the sofa-bed and make a PILLOW FORT! Light a fire. You can only come in if you know the password.',
+							'Watch an old family favorite together, like "The Sound of Music"',
+							"Carolling, level up! Pick some songs. Go stand outside a friend's house. Ring the doorbell, and when they open start to sing! Then, when you're done, pack them into the car with you. They get to choose the next person you sing to!",
+							"Work on some hand-made presents. You know they'll be loved.",
+							"You must dress as obnoxiously over-the-top holiday as you can. Two ugly sweaters. Antlers. Red nose. String of lights scotched taped to your pants. Be creative, and don't forget to document!", 
+							'Make a song that says, "X hours since last incident" and update it every time someone sings a holiday song',
+							"Spend an hour writing Christmas cards to people you care about.",
+							"Find out if there's a play, ballet, orchestra or musical on. Book tickets!",
+							'For the kids: Invite friends over. Make sure someone can bring Cards Against Humanity.',
+							'Roast Marshmellows and make tiny Marshmellow snowmen.',
+							'Go christmas shopping. Whenever you lose someone, yell "MARCO!" They must respond "POLO!"',
+							'Have some of your holiday photos phyically printed, and hang them around the house. Date and annotate with sharpie.', 
+							'Invite some friends over for drinks and play charades! For all ages. ',
+							"Fancy Day! It's the holidays, show some class and dress like a Victorian going to the horse races. Or something.",
+							"Field Trips! Invite a group of people over. Randomly pair them. They have to go on a field trip together and bring back evidence.",
+							"Set up a photo booth in your house. Bonus points if it's before a Christmas party.",
+							"Find a polaroid camera, and use it to take all your holiday pictures for a week! You'll find everybody is more involved in the photo-taking process, since you can't do repeats."
+							];
+ 
+			var rand = ideas[Math.floor(Math.random() * ideas.length)];
+			var bg = images[Math.floor(Math.random() * images.length)];
+
+		</script>			
+	</body>
+</html>
